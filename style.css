@@ -1,0 +1,134 @@
+/* style.css */
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+.calculated-value {
+    background-color: #f3f4f6; /* gray-100 */
+    padding: 0.5rem 0.75rem; /* py-2 px-3 */
+    border-radius: 0.375rem; /* rounded-md */
+    min-height: 38px;
+    display: inline-block;
+    width: 100%;
+    color: #4b5563; /* gray-600 */
+    line-height: 1.25rem;
+    box-sizing: border-box;
+}
+
+/* Remove spinners from number inputs for a cleaner look */
+input[type=number] {
+    -moz-appearance: textfield;
+}
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Base styling for form elements to ensure consistency */
+/* Tailwind classes will be primarily used in JS for inputs within tables for more specific control */
+select,
+input[type=text],
+input[type=number] {
+    min-height: 38px; /* Consistent height */
+    box-sizing: border-box;
+    border-width: 1px;
+    border-color: #d1d5db; /* gray-300 */
+    border-style: solid;
+    border-radius: 0.375rem; /* rounded-md */
+    padding: 0.5rem 0.75rem; /* py-2 px-3 */
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
+}
+input[type=file] { /* File input often needs separate considerations */
+    min-height: 38px;
+    box-sizing: border-box;
+}
+
+
+.info-icon {
+    cursor: pointer;
+    display: inline-block;
+    margin-left: 4px;
+    color: #4b5563; /* gray-600 */
+    font-weight: bold;
+}
+
+.explanation-section {
+    display: none; /* Hidden by default, shown by JS */
+}
+
+/* Ensure table cells have consistent vertical alignment and padding */
+/* More specific padding/widths for table cells can be handled by Tailwind in JS row generation if needed */
+td {
+    vertical-align: middle;
+    padding-left: 0.75rem; /* px-3 */
+    padding-right: 0.75rem; /* px-3 */
+    padding-top: 0.5rem; /* py-2 */
+    padding-bottom: 0.5rem; /* py-2 */
+}
+th {
+    padding-left: 0.75rem; /* px-3 */
+    padding-right: 0.75rem; /* px-3 */
+}
+
+
+/* Gas unit selector specific styling (if different from general selects) */
+.gas-unit-selector {
+    min-width: 70px;
+    width: 70px;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+}
+
+/* Language button active state */
+.lang-btn.active {
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+/* Toggle Switch Style for Manual Airflow Override */
+.toggle-checkbox:checked + .toggle-label {
+    background-color: #4f46e5; /* indigo-600 */
+}
+.toggle-checkbox:checked + .toggle-label::after {
+    transform: translateX(20px);
+}
+.toggle-label::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    background-color: white;
+    border-radius: 9999px; /* rounded-full */
+    transition: transform 0.2s ease-in-out;
+}
+.toggle-label {
+    width: 40px;
+    height: 20px;
+    background-color: #d1d5db; /* gray-300 */
+    border-radius: 9999px; /* rounded-full */
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+    display: inline-block;
+}
+
+/* Styling for the method comparison text */
+.comparison-note {
+    font-size: 0.875rem; /* text-sm */
+    color: #4b5563; /* gray-600 */
+    margin-top: 0.5rem; /* mt-2 */
+}
+
+/* Minimal styling for dynamically added inputs in tables if not fully handled by Tailwind in JS */
+/* It's generally better to apply Tailwind classes directly when creating elements in JS */
+#applianceTableBody input,
+#applianceTableBody select,
+#ductSystemTableBody input,
+#ductSystemTableBody select {
+    /* Tailwind classes added in JS (like 'w-full', 'p-2', 'border', etc.) will define most of this. */
+    /* This ensures they pick up the base styling if no other classes are applied. */
+    /* However, the global select/input styling above should cover these too. */
+}

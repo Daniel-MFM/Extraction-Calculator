@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="pt"> {/* Default language set to Portuguese */}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estimador de Caudal para Hotte de Cozinha</title> {/* Title also in PT as per previous default */}
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css"> {/* Link to your external CSS file */}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-50">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-full lg:max-w-7xl xl:max-w-screen-2xl">
+        <div class="text-right mb-4">
+            <button class="lang-btn px-2 py-1 text-sm text-indigo-600 hover:text-indigo-900" data-lang="en">EN</button> |
+            <button class="lang-btn px-2 py-1 text-sm text-indigo-600 hover:text-indigo-900 active" data-lang="pt">PT</button> {/* PT button active by default */}
+        </div>
+
+        <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4" data-translate-key="title">Estimador de Caudal para Hotte de Cozinha</h1>
+        <p class="text-sm text-gray-600 mb-6 bg-yellow-100 border border-yellow-300 p-3 rounded-md shadow-sm" data-translate-key="disclaimer">
+            {Disclaimer Text will be populated by JS}
+        </p>
+
+        <div class="mb-6 p-4 bg-white rounded-lg shadow-md border border-gray-200">
+            <h2 class="text-lg font-semibold text-gray-700 mb-2" data-translate-key="calculation_method_title">Método de Cálculo:</h2>
+            <div class="flex space-x-4">
+                <label class="flex items-center">
+                    <input type="radio" name="calculationMethod" value="heatLoad" class="form-radio h-4 w-4 text-indigo-600" checked>
+                    <span class="ml-2 text-sm text-gray-700" data-translate-key="calc_method_heat_load">Método Carga Térmica (Potência Equip.)</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="calculationMethod" value="hoodDimension" class="form-radio h-4 w-4 text-indigo-600">
+                    <span class="ml-2 text-sm text-gray-700" data-translate-key="calc_method_hood_dim">Método Dimensões da Hotte</span>
+                </label>
+            </div>
+        </div>
+
+        <div class="mb-6 p-4 bg-white rounded-lg shadow-md border border-gray-200">
+             <label for="hoodType" class="block text-sm font-medium text-gray-700 mb-1" data-translate-key="hood_type_label">Tipo de Hotte:</label>
+             <select id="hoodType" class="w-full md:w-1/2 p-2">
+                 {/* Options will be populated/translated by JS, ensure JS handles this */}
+                 <option value="wall" data-translate-key="hood_type_wall">Mural (Canópia)</option>
+                 <option value="island" data-translate-key="hood_type_island">Central (Ilha)</option>
+                 <option value="eyebrow" data-translate-key="hood_type_eyebrow">Compensada / Prateleira</option>
+             </select>
+        </div>
+
+        <div id="hoodDimensionInputsSection" class="mb-6 p-4 bg-white rounded-lg shadow-md border border-gray-200 hidden">
+            <h2 class="text-xl font-semibold text-gray-800 mb-3" data-translate-key="hood_dim_title">Dados Dimensionais da Hotte</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="hoodLength" class="block text-sm font-medium text-gray-700 mb-1" data-translate-key="hood_length_label">Comprimento Hotte (m):</label>
+                    <input type="number" id="hoodLength" min="0.1" step="0.1" placeholder="e.g., 2.0" class="w-full p-2 data-input-dim">
+                </div>
+                <div id="hoodDepthWrapper">
+                    <label for="hoodDepth" class="block text-sm font-medium text-gray-700 mb-1" data-translate-key="hood_depth_label">Profundidade Hotte (m):</label>
+                    <input type="number" id="hoodDepth" min="0.1" step="0.1" placeholder="e.g., 1.0" class="w-full p-2 data-input-dim">
+                </div>
+                <div id="cookingDutyLevelWrapper">
+                    <label for="cookingDutyLevel" class="block text-sm font-medium text-gray-700 mb-1" data-translate-key="duty_level_label">Nível de Carga Típico da Cozinha:</label>
+                    <select id="cookingDutyLevel" class="w-full p-2 data-input-dim">
+                        {/* Options will be populated/translated by JS */}
+                        <option value="medium" data-translate-key="duty_medium">Carga Média (Ex: Fogões, Fritadeiras)</option>
+                        <option value="light" data-translate-key="duty_light">Carga Ligeira (Ex: Fornos, Vapor)</option>
+                        <option value="heavy" data-translate-key="duty_heavy">Carga Pesada (Ex: Grelhadores, Woks)</option>
+                    </select>
+                </div>
+                <div id="eyebrowAirflowPerMeterWrapper" class="hidden">
+                    <label for="eyebrowAirflowPerMeter" class="block text-sm font-medium text-gray-700 mb-1" data-translate-key="eyebrow_apm_label">Caudal Necessário por Metro Linear (m³/h/m):</label>
+                    <input type="number" id="eyebrowAirflowPerMeter" min="100" step="50" placeholder="e.g., 500" class="w-full p-2 data-input-dim">
+                </div>
+            </div>
+             <p class="text-xs text-gray-500 mt-2" data-translate-key="hood_dim_note">
+                {Hood dimension note will be populated by JS}
+            </p>
+        </div>
+
+        <div id="explanationSectionEquip" class="explanation-section mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg shadow-sm">
+            <h3 class="text-lg font-semibold text-blue-800 mb-2" data-translate-key="explanation_title_equip">Tipo de Equipamento & Fator de Calor Sensível</h3>
+            <p class="text-sm text-gray-700 mb-2" data-translate-key="explanation_p1_equip"></p>
+            <ul class="list-disc list-inside text-sm text-gray-700 space-y-1" data-translate-key="explanation_list_equip" aria-live="polite"></ul>
+            <button class="closeExplanationBtn mt-3 px-3 py-1 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600" data-target-section="explanationSectionEquip" data-translate-key="explanation_close">Fechar</button>
+        </div>
+        <div id="explanationSectionOutlet" class="explanation-section mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg shadow-sm">
+            <h3 class="text-lg font-semibold text-blue-800 mb-2" data-translate-key="explanation_title_outlet">Tipo de Saída de Exaustão & Perda de Carga</h3>
+            <p class="text-sm text-gray-700 mb-2" data-translate-key="explanation_p1_outlet"></p>
+            <ul class="list-disc list-inside text-sm text-gray-700 space-y-1" data-translate-key="explanation_list_outlet" aria-live="polite"></ul>
+            <button class="closeExplanationBtn mt-3 px-3 py-1 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600" data-target-section="explanationSectionOutlet" data-translate-key="explanation_close">Fechar</button>
+        </div>
+        <div id="explanationSectionVelocity" class="explanation-section mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg shadow-sm">
+            <h3 class="text-lg font-semibold text-blue-800 mb-2" data-translate-key="explanation_title_velocity">Velocidade do Ar na Conduta</h3>
+            <p class="text-sm text-gray-700 mb-2" data-translate-key="explanation_p1_velocity"></p>
+            <ul class="list-disc list-inside text-sm text-gray-700 space-y-1" data-translate-key="explanation_list_velocity" aria-live="polite"></ul>
+            <button class="closeExplanationBtn mt-3 px-3 py-1 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600" data-target-section="explanationSectionVelocity" data-translate-key="explanation_close">Fechar</button>
+        </div>
+
+        <div id="appliancesSection">
+            <h2 class="text-xl font-semibold text-gray-800 mb-3 mt-6" data-translate-key="appliances_title">Equipamentos Sob a Hotte (Método Carga Térmica)</h2>
+            <div class="mb-4">
+                <label for="diversityFactor" class="block text-sm font-medium text-gray-700 mb-1" data-translate-key="diversity_factor_label">Fator de Simultaneidade (Diversidade):</label>
+                <input type="number" id="diversityFactor" min="0.1" max="1.0" step="0.05" value="1.0" class="w-full md:w-1/4 p-2 border border-gray-300 rounded-md shadow-sm">
+            </div>
+            <div class="bg-white rounded-lg shadow-md border border-gray-200 overflow-x-auto mb-6">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" data-translate-key="th_appliance_name">Nome Equipamento</th>
+                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <span data-translate-key="th_equipment_type">Tipo Equipamento</span> <span class="info-icon" data-target-section="explanationSectionEquip" title="Clique para explicação">ⓘ</span>
+                            </th>
+                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" data-translate-key="th_gas_type">Tipo Gás</th>
+                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" data-translate-key="th_gas_usage">Consumo Gás</th>
+                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" data-translate-key="th_gas_unit">Unid.</th>
+                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" data-translate-key="th_electric_usage">Consumo Elétrico (kW)</th>
+                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" data-translate-key="th_total_power">Potência Total (kW)</th>
+                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" data-translate-key="th_sensible_factor">Fator Sensível</th>
+                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" data-translate-key="th_sensible_heat">Calor Sensível (kW)</th>
+                            <th class="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" data-translate-key="th_action">Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="applianceTableBody" class="bg-white divide-y divide-gray-200">
+                        </tbody>
+                </table>
+            </div>
+            <div class="flex space-x-4 mb-6">
+                 <button id="addApplianceBtn" class="px-4 py-2 bg-indigo-600 text-white rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" data-translate-key="add_appliance">Adicionar Equipamento</button>
+                 <button id="importCsvBtn" class="px-4 py-2 bg-yellow-600 text-white rounded-md shadow-sm hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500" data-translate-key="import_csv">Importar CSV</button>
+                 <input type="file" id="csvFileInput" accept=".csv" style="display: none;">
+                 <button id="exportCsvBtn" class="px-4 py-2 bg-green-600 text-white rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" data-translate-key="export_csv">Exportar para CSV</button>
+            </div>
+        </div>
+
+        <div class="p-4 bg-white rounded-lg shadow-md border border-gray-200 mb-6">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4" data-translate-key="summary_title">Resumo do Cálculo</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div id="totalSensibleHeatWrapper">
+                    <label class="block text-sm font-medium text-gray-700 mb-1" data-translate-key="summary_total_sensible">Carga Térmica Sensível Total:</label>
+                    <span id="totalSensibleHeat" class="calculated-value" aria-live="polite">0.0 kW</span>
+                </div>
+                <div id="hoodFactorWrapper">
+                    <label class="block text-sm font-medium text-gray-700 mb-1" data-translate-key="summary_hood_factor">Intervalo Fator Hotte (k):</label>
+                    <span id="hoodFactorDisplay" class="calculated-value" aria-live="polite">0-0 (m³/h)/kW</span>
+                </div>
+                <div id="estimatedAirflowWrapper" class="bg-indigo-50 p-3 rounded-md border border-indigo-200">
+                    <label class="block text-sm font-medium text-indigo-800 mb-1" data-translate-key="summary_airflow_label">Caudal Estimado na Hotte:</label>
+                    <span id="estimatedAirflow" class="text-xl md:text-2xl font-bold text-indigo-700 block" aria-live="polite">0 - 0 m³/h</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="methodComparisonSection" class="p-4 bg-gray-100 rounded-lg shadow-sm border border-gray-300 mb-6">
+            <h3 class="text-lg font-semibold text-gray-700 mb-2" data-translate-key="comparison_title">Comparação de Métodos de Cálculo</h3>
+            <p id="comparisonText" class="text-sm text-gray-600" aria-live="polite" data-translate-key="comparison_text_default"></p>
+            <p class="text-xs text-gray-500 mt-2" data-translate-key="comparison_disclaimer"></p>
+        </div>
+
+        <div class="p-4 bg-white rounded-lg shadow-md border border-gray-200">
+            <div class="flex justify-between items-center mb-4">
+                 <h2 class="text-xl font-semibold text-gray-800" data-translate-key="pressure_title">Sistema de Condutas & Estimativa de Perda de Carga</h2>
+                 <div class="flex items-center space-x-2">
+                     <label for="manualAirflowToggle" class="text-sm font-medium text-gray-700" data-translate-key="pressure_manual_toggle_label">Usar Caudal Manual:</label>
+                     <input type="checkbox" id="manualAirflowToggle" class="toggle-checkbox hidden">
+                     <label for="manualAirflowToggle" class="toggle-label"></label>
+                 </div>
+            </div>
+             <div id="manualAirflowInputWrapper" class="mb-4 hidden">
+                 <label for="manualAirflowInput" class="block text-sm font-medium text-gray-700 mb-1" data-translate-key="pressure_manual_input_label">Caudal Manual (m³/h):</label>
+                 <input type="number" id="manualAirflowInput" min="0" step="100" placeholder="e.g., 6000" class="w-full md:w-1/2 p-2 data-input-pressure-config">
+             </div>
+             <p class="text-sm text-gray-600 mb-4" data-translate-key="pressure_note"></p>
+
+            <div class="mb-4">
+                <label for="exhaustAirTemp" class="block text-sm font-medium text-gray-700 mb-1" data-translate-key="exhaust_air_temp_label">Temperatura do Ar de Exaustão (°C):</label>
+                <input type="number" id="exhaustAirTemp" value="40" step="1" class="w-full md:w-1/4 p-2 border border-gray-300 rounded-md shadow-sm data-input-pressure-config">
+            </div>
+            
+            <h3 class="text-lg font-semibold text-gray-700 mt-6 mb-2" data-translate-key="duct_system_layout_title">Traçado do Sistema de Condutas</h3>
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-x-auto mb-4">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" data-translate-key="ds_order">Ordem</th>
+                            <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" data-translate-key="ds_type">Tipo Elemento</th>
+                            <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" data-translate-key="ds_details_dimensions">Detalhes / Dimensões</th>
+                            <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" data-translate-key="ds_parameters">Parâmetros (Comprimento/Quantidade/Material)</th>
+                            <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" data-translate-key="ds_action">Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ductSystemTableBody" class="bg-white divide-y divide-gray-200">
+                        </tbody>
+                </table>
+            </div>
+            <div class="flex space-x-4 mb-6">
+                <button id="addDuctSegmentBtn" class="px-4 py-2 bg-blue-600 text-white rounded-md shadow-sm hover:bg-blue-700" data-translate-key="add_duct_segment">Adicionar Troço de Conduta</button>
+                <button id="addFittingBtn" class="px-4 py-2 bg-green-600 text-white rounded-md shadow-sm hover:bg-green-700" data-translate-key="add_fitting">Adicionar Acessório</button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4 mb-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1" data-translate-key="pressure_recom_duct">Diâmetro de Conduta Recomendado (Referência):</label>
+                    <span id="recommendedDuct" class="calculated-value" aria-live="polite">0 mm</span>
+                </div>
+                <div>
+                     <label for="filterPressureDrop" class="block text-sm font-medium text-gray-700 mb-1" data-translate-key="pressure_filter_label">Perda de Carga Filtro (Pa):</label>
+                     <input type="number" id="filterPressureDrop" min="0" step="10" placeholder="e.g., 150" class="w-full p-2 data-input-pressure-config">
+                </div>
+                <div>
+                     <label for="outletType" class="block text-sm font-medium text-gray-700 mb-1">
+                         <span data-translate-key="pressure_outlet_label">Tipo Saída Exaustão:</span> <span class="info-icon" data-target-section="explanationSectionOutlet" title="Clique para explicação">ⓘ</span>
+                     </label>
+                     <select id="outletType" class="w-full p-2 data-input-pressure-config">
+                        {/* Options will be populated/translated by JS */}
+                         <option value="weather_cap" data-translate-key="pressure_outlet_cap">Chapéu Chinês</option>
+                         <option value="low_loss_louver" data-translate-key="pressure_outlet_louver">Grelha Baixa Perda</option>
+                         <option value="bird_screen" data-translate-key="pressure_outlet_screen">Rede Anti-pássaro</option>
+                         <option value="open" data-translate-key="pressure_outlet_open">Conduta Aberta</option>
+                     </select>
+                </div>
+            </div>
+
+             <div class="mt-4 pt-4 border-t border-gray-200 grid grid-cols-1 md:grid-cols-2 gap-4">
+                 <div>
+                     <label class="block text-sm font-medium text-gray-700 mb-1">
+                         <span data-translate-key="pressure_velocity_label">Velocidade do Ar Calculada (1º Troço):</span>
+                         <span class="text-xs text-gray-500 ml-1" data-translate-key="pressure_velocity_recom">(Recomendado: 7-12 m/s)</span>
+                         <span class="info-icon" data-target-section="explanationSectionVelocity" title="Clique para explicação">ⓘ</span>
+                     </label>
+                     <span id="calculatedVelocity" class="calculated-value" aria-live="polite">0.0 m/s</span>
+                 </div>
+                 <div class="bg-blue-50 p-3 rounded-md border border-blue-200">
+                     <label class="block text-sm font-medium text-blue-800 mb-1" data-translate-key="pressure_total_label">Perda de Carga Total Estimada:</label>
+                     <span id="estimatedPressureDrop" class="text-xl font-bold text-blue-700 block" aria-live="polite">0 Pa</span>
+                 </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script> {/* Link to your external JavaScript file */}
+</body>
+</html>
