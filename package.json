@@ -3,20 +3,29 @@
   "version": "1.0.0",
   "main": "script.js",
   "scripts": {
+    "lint": "eslint ./src --ext .ts",
+    "format": "prettier --write \"./src/**/*.{ts,html,css,json}\"",
+    "clean": "rimraf ./dist",
+    "prebuild": "npm run clean && npm run lint",
+    "build": "tsc && cpx \"src/**/*.{html,css}\" dist && cpx src/appsscript.json dist",
+    "deploy": "npm run build && npx clasp push",
+    "deploy:force": "npm run build && npx clasp push -f",
+    "pull": "npx clasp pull",
+    "open": "npx clasp open",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Daniel-MFM/Extraction-Calculator.git"
+  "url": "git+https://github.com/Daniel-MFM/Extraction-Calculator.git"
   },
-  "keywords": [],
-  "author": "",
+"keywords": ["google-apps-script", "calculator", "extraction"],
+"author": "Daniel-MFM",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Daniel-MFM/Extraction-Calculator/issues"
   },
   "homepage": "https://github.com/Daniel-MFM/Extraction-Calculator#readme",
-  "description": "",
+"description": "A Google Apps Script project for calculating extractions.",
   "devDependencies": {
     "@google/clasp": "^3.0.4-alpha",
     "@types/google-apps-script": "^1.0.97",
