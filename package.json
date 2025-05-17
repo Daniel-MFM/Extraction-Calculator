@@ -1,7 +1,9 @@
 {
   "name": "extraction-calculator",
   "version": "1.0.0",
+  "description": "A Google Apps Script project for calculating extractions.",
   "main": "script.js",
+  "type": "module",
   "scripts": {
     "lint": "eslint ./src --ext .ts",
     "format": "prettier --write \"./src/**/*.{ts,html,css,json}\"",
@@ -16,16 +18,19 @@
   },
   "repository": {
     "type": "git",
-  "url": "git+https://github.com/Daniel-MFM/Extraction-Calculator.git"
+    "url": "git+https://github.com/Daniel-MFM/Extraction-Calculator.git"
   },
-"keywords": ["google-apps-script", "calculator", "extraction"],
-"author": "Daniel-MFM",
+  "keywords": [
+    "google-apps-script",
+    "calculator",
+    "extraction"
+  ],
+  "author": "Daniel-MFM",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Daniel-MFM/Extraction-Calculator/issues"
   },
   "homepage": "https://github.com/Daniel-MFM/Extraction-Calculator#readme",
-"description": "A Google Apps Script project for calculating extractions.",
   "devDependencies": {
     "@google/clasp": "^3.0.4-alpha",
     "@types/google-apps-script": "^1.0.97",
@@ -35,9 +40,11 @@
     "cpx": "^1.5.0",
     "eslint": "^9.27.0",
     "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-googleappsscript": "^1.0.5",
     "eslint-plugin-prettier": "^5.4.0",
     "prettier": "^3.5.3",
     "rimraf": "^6.0.1",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.32.1"
   }
 }
