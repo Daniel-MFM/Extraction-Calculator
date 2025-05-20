@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <base target="_top">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
+        crossorigin="anonymous">
+
+  <title>Estimador de Caudal para Hotte</title>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif; background-color: #f8f9fa; color: #212529;
+      padding-top: 2rem; padding-bottom: 3rem; font-size: 15px;
+    }
+    .container {
+      max-width: 1200px; background-color: #ffffff; padding: 2rem;
+      border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    h2, h4, h5 { color: #343a40; }
+    h2 { margin-bottom: 1.5rem; font-weight: 600; }
+    .section-title {
+      font-size: 1.4rem; font-weight: 500; margin-top: 2.5rem;
+      margin-bottom: 1.5rem; padding-bottom: 0.75rem;
+      border-bottom: 2px solid #007bff; color: #007bff;
+    }
+    .alert-warning { /* ... (same) ... */ }
+    .form-group label { font-weight: 500; color: #495057; }
+    .form-control, .form-control-sm, .btn { border-radius: 0.3rem; }
+    .form-control-sm { font-size: 0.8rem; padding: 0.25rem 0.5rem; height: calc(1.5em + 0.5rem + 2px); }
+
+    /* Single Row Table Styling */
+    .table-responsive {
+        margin-bottom: 1rem; border: 1px solid #dee2e6;
+        border-radius: 6px; overflow: hidden;
+    }
+    .table thead th {
+      background-color: #e9ecef; color: #495057;
+      font-weight: 600; border-bottom-width: 1px; border-top: none;
+      font-size: 0.85rem; padding: 0.6rem 0.5rem; text-align: left; /* Align left for headers */
+    }
+    .table td {
+        padding: 0.4rem 0.5rem; font-size: 0.85rem; vertical-align: middle;
+    }
+    .table-hover tbody tr:hover { background-color: #f1f3f5; }
+
+    #equipmentTableBody .form-control-sm { width: 100%; box-sizing: border-box; }
+    #equipmentTableBody .equip-name-input { min-width: 150px; } /* Nome Equip. */
+    #equipmentTableBody .equip-type-select { min-width: 130px; } /* Tipo Equip. */
+    #equipmentTableBody .equip-gas-type-select { min-width: 120px; } /* Tipo Gás */
+    #equipmentTableBody .equip-consumption-input { width: 90px; } /* Consumo Gás / Elétrico */
+    #equipmentTableBody .equip-unit-select { min-width: 80px; } /* Unidade Gás */
+    #equipmentTableBody .equip-sensible-factor-input { width: 80px; } /* Fator Sensível */
+
+
+    .equip-calculated-value { /* For Pot. Total and Calor Sensível display cells */
+        font-weight: 500; text-align: right;
+        background-color: #f8f9fa !important;
+        padding-right: 0.75rem !important;
+    }
+    .equip-potencia-total { color: #17a2b8; }
+    .equip-calor-sensivel { color: #28a745; }
+
+    .action-cell { width: 60px; text-align: center; }
+    .action-cell .btn-danger { padding: 0.1rem 0.4rem; font-size: 0.9rem; line-height: 1.2; }
+
+    .summary-box { /* ... (styles remain same) ... */ }
+    .btn-primary, .btn-secondary { /* ... (styles remain same) ... */ }
+    .calculation-method-options { /* ... (styles remain same) ... */ }
+    .placeholder-text { /* ... (styles remain same) ... */ }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="text-center mb-4">
+      <h2>Estimador de Caudal para Hotte de Cozinha</h2>
+    </header>
+
+    <p class="alert alert-warning">
+      <strong>Aviso:</strong> Esta ferramenta fornece uma estimativa... (disclaimer)
+    </p>
+
+    <div class="calculation-method-options mb-4">
+      <h4 class="section-title" style="border-bottom: none; margin-bottom: 0.75rem;">Método de Cálculo:</h4>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="calculationMethod" id="heatLoadMethodRadio" value="heatload" checked onchange="App.toggleCalculationMethodUI()">
+        <label class="form-check-label" for="heatLoadMethodRadio">Carga Térmica (Equip.)</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="calculationMethod" id="hoodDimensionsMethodRadio" value="dimensions" onchange="App.toggleCalculationMethodUI()">
+        <label class="form-check-label" for="hoodDimensionsMethodRadio">Dimensões da Hotte</label>
+      </div>
+    </div>
+
+    <div id="heatLoadSection">
+      <h5 class="section-title">Equipamentos Sob a Hotte (Método Carga Térmica)</h5>
+      <div class="form-row mb-3">
+        <div class="form-group col-md-4">
+          <label for="hoodTypeSelect">Tipo de Hotte:</label>
+          <select class="form-control form-control-sm" id="hoodTypeSelect">
+              </select>
+        </div>
+        <div class="form-group col-md-4">
+          <label for="simultaneityFactor">Fator de Simultaneidade (Diversidade):</label>
+          <input type="number" class="form-control form-control-sm" id="simultaneityFactor" value="1.0" step="0.05" min="0.1" max="1.0">
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-sm table-bordered table-hover">
+          <thead class="thead-light">
+            <tr>
+              <th>Nome Equip.</th>
+              <th>Tipo Equip.</th>
+              <th>Tipo Gás</th>
+              <th>Consumo Gás</th>
+              <th>Unid. Gás</th>
+              <th>Cons. Elétrico (kW)</th>
+              <th>Potência Total (kW)</th> <th>Fator Sensível</th>     <th>Calor Sensível (kW)</th><th>Ação</th>
+            </tr>
+          </thead>
+          <tbody id="equipmentTableBody">
+            </tbody>
+        </table>
+      </div>
+      <button type="button" class="btn btn-primary btn-sm" id="addEquipmentButton">Adicionar Equipamento</button>
+      <div class="summary-box">
+        <h5>Resumo do Cálculo (Carga Térmica)</h5>
+        <p>Carga Térmica Sensível Total (P<sub>conv,total</sub>): <strong id="totalSensibleHeatOutput">0.00 kW</strong></p>
+        <p>Fator Hotte (k) (Ref.): <strong id="intervalFactorKOutput">150-250 (m³/h)/kW (Hotte Mural - Carga Média)</strong></p>
+        <p>Caudal Estimado na Hotte (Q): <strong id="estimatedAirflowOutput">0 m³/h</strong></p>
+      </div>
+    </div>
+
+    <div id="hoodDimensionsSection" style="display:none;">
+      <h5 class="section-title">Método Dimensões da Hotte</h5>
+       <div class="form-row">
+        <div class="form-group col-md-4">
+          <label for="hoodLength">Comprimento da Hotte (m):</label>
+          <input type="number" id="hoodLength" class="form-control form-control-sm" step="0.1" min="0.1" placeholder="e.g., 1.2">
+        </div>
+        <div class="form-group col-md-4">
+          <label for="hoodWidth">Largura da Hotte (m):</label>
+          <input type="number" id="hoodWidth" class="form-control form-control-sm" step="0.1" min="0.1" placeholder="e.g., 0.8">
+        </div>
+        <div class="form-group col-md-4">
+          <label for="captureVelocity">Velocidade de Captura (m/s):</label>
+          <input type="number" id="captureVelocity" class="form-control form-control-sm" step="0.05" min="0.1" placeholder="e.g., 0.25">
+          <small class="form-text text-muted">0.15-0.25 (Leve), 0.25-0.35 (Média), 0.35-0.50+ (Pesada)</small>
+        </div>
+      </div>
+      <div class="summary-box">
+        <p>Caudal Estimado (Dimensões): <strong id="estimatedAirflowDimensionsOutput">0 m³/h</strong></p>
+      </div>
+    </div>
+
+    <div id="ductSystemSection" class="mt-4">
+      <h4 class="section-title">Sistema de Condutas & Perda de Carga (Brevemente)</h4>
+      <p class="placeholder-text">Funcionalidades para adicionar troços de conduta, acessórios, e calcular a perda de carga total do sistema serão adicionadas aqui.</p>
+      <div class="summary-box">
+        <h5>Perda de Carga Total Estimada (SP): <strong id="totalStaticPressure" class="placeholder-text">0 Pa</strong></h5>
+      </div>
+    </div>
+
+  </div> <script src="script.js"></script>
+</body>
+</html>
